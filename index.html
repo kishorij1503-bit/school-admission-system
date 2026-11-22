@@ -1,0 +1,757 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdmitSchool - School Admission System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="authPage" class="auth-page">
+    <div class="auth-card">
+        <div class="logo">🎓</div>
+        <h1>AdmitSchool</h1>
+        <p class="muted">School Admission Management System</p>
+
+        <div class="auth-tabs">
+            <button id="loginTab" class="active">Login</button>
+            <button id="registerTab">Register</button>
+        </div>
+
+        <form id="loginForm">
+            <label>Email</label>
+            <input type="email" id="loginEmail" required placeholder="Enter email">
+
+            <label>Password</label>
+            <input type="password" id="loginPassword" required placeholder="Enter password">
+
+            <label>Role</label>
+            <select id="loginRole" required>
+                <option value="Admin">Admin</option>
+                <option value="Staff">Staff</option>
+                <option value="Applicant">Applicant</option>
+            </select>
+
+            <button type="submit" class="primary full">Login</button>
+        </form>
+
+        <form id="registerForm" class="hidden">
+            <label>Full Name</label>
+            <input type="text" id="registerName" required>
+
+            <label>Email</label>
+            <input type="email" id="registerEmail" required>
+
+            <label>Password</label>
+            <input type="password" id="registerPassword" minlength="6" required>
+
+            <label>Role</label>
+            <select id="registerRole">
+                <option value="Applicant">Applicant</option>
+                <option value="Staff">Staff</option>
+            </select>
+
+            <button type="submit" class="primary full">Create Account</button>
+        </form>
+
+        <p id="authMessage" class="message"></p>
+
+        <div class="demo-box">
+            <strong>Demo Accounts</strong>
+            <p>Admin: admin@gmail.com / admin123</p>
+            <p>Staff: staff@gmail.com / staff123</p>
+        </div>
+    </div>
+</div>
+
+<div id="appPage" class="app hidden">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">🎓 AdmitSchool</div>
+        <p class="sidebar-subtitle">Admission Management</p>
+
+        <nav id="navigation">
+            <button class="nav-link active" data-page="dashboard">🏠 Dashboard</button>
+            <button class="nav-link" data-page="registration">📝 Student Registration</button>
+            <button class="nav-link" data-page="applications">📋 Applications</button>
+            <button class="nav-link" data-page="documents">📁 Document Upload</button>
+            <button class="nav-link" data-page="review">✅ Application Review</button>
+            <button class="nav-link" data-page="exam">📚 Entrance Exam</button>
+            <button class="nav-link" data-page="merit">🏆 Merit List</button>
+            <button class="nav-link" data-page="fees">💳 Fee Management</button>
+            <button class="nav-link" data-page="admission">🎓 Admission Confirmation</button>
+            <button class="nav-link" data-page="tracking">🔎 Application Tracking</button>
+            <button class="nav-link" data-page="reports">📊 Reports</button>
+        </nav>
+
+        <button id="logoutButton" class="logout-button">↪ Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <button id="menuButton" class="menu-button">☰</button>
+                <span class="top-title">School Admission System</span>
+            </div>
+            <div class="top-user">
+                <button id="themeButton" class="theme-button">🌙</button>
+                <span id="userDisplay">User</span>
+                <span id="roleDisplay" class="role-tag">Admin</span>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="page">
+                <div class="page-heading">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Overview of school admission activities</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span>Total Applications</span>
+                        <h2 id="totalCount">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Submitted</span>
+                        <h2 id="submittedCount">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Under Review</span>
+                        <h2 id="reviewCount">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Shortlisted</span>
+                        <h2 id="shortlistedCount">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Admitted</span>
+                        <h2 id="admittedCount">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Rejected</span>
+                        <h2 id="rejectedCount">0</h2>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Recent Applications</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentApplications"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Course-wise Applications</h2>
+                    <div id="courseAnalytics" class="analytics-list"></div>
+                </div>
+            </section>
+
+            <!-- STUDENT REGISTRATION / APPLICATION FORM -->
+            <section id="registration" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Student Registration</h1>
+                        <p>Complete the online admission application</p>
+                    </div>
+                </div>
+
+                <div class="step-indicator">
+                    <span id="stepOne" class="step active">1. Personal Details</span>
+                    <span id="stepTwo" class="step">2. Academic Details</span>
+                    <span id="stepThree" class="step">3. Contact Details</span>
+                </div>
+
+                <form id="applicationForm" class="panel">
+                    <div id="formStep1" class="form-step">
+                        <h2>Personal Information</h2>
+
+                        <div class="form-grid">
+                            <div>
+                                <label>Student Name *</label>
+                                <input id="studentName" required>
+                            </div>
+                            <div>
+                                <label>Date of Birth *</label>
+                                <input type="date" id="studentDOB" required>
+                            </div>
+                            <div>
+                                <label>Gender *</label>
+                                <select id="studentGender" required>
+                                    <option value="">Select Gender</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Nationality</label>
+                                <input id="studentNationality" value="Indian">
+                            </div>
+                        </div>
+                        <button type="button" id="nextStep1" class="primary">Next</button>
+                    </div>
+
+                    <div id="formStep2" class="form-step hidden">
+                        <h2>Academic Information</h2>
+
+                        <div class="form-grid">
+                            <div>
+                                <label>Previous School *</label>
+                                <input id="previousSchool" required>
+                            </div>
+                            <div>
+                                <label>Previous Class *</label>
+                                <input id="previousClass" required>
+                            </div>
+                            <div>
+                                <label>Previous Academic Score (%) *</label>
+                                <input type="number" id="academicScore" min="0" max="100" required>
+                            </div>
+                            <div>
+                                <label>Applying Course *</label>
+                                <select id="course" required>
+                                    <option value="">Select Course</option>
+                                    <optgroup label="CBSE">
+                                        <option>Class 1 (CBSE)</option>
+                                        <option>Class 2 (CBSE)</option>
+                                        <option>Class 3 (CBSE)</option>
+                                        <option>Class 4 (CBSE)</option>
+                                        <option>Class 5 (CBSE)</option>
+                                        <option>Class 6 (CBSE)</option>
+                                        <option>Class 7 (CBSE)</option>
+                                        <option>Class 8 (CBSE)</option>
+                                        <option>Class 9 (CBSE)</option>
+                                        <option>Class 10 (CBSE)</option>
+                                    </optgroup>
+                                    <optgroup label="ICSE">
+                                        <option>Class 1 (ICSE)</option>
+                                        <option>Class 2 (ICSE)</option>
+                                        <option>Class 3 (ICSE)</option>
+                                        <option>Class 4 (ICSE)</option>
+                                        <option>Class 5 (ICSE)</option>
+                                        <option>Class 6 (ICSE)</option>
+                                        <option>Class 7 (ICSE)</option>
+                                        <option>Class 8 (ICSE)</option>
+                                        <option>Class 9 (ICSE)</option>
+                                        <option>Class 10 (ICSE)</option>
+                                    </optgroup>
+                                    <optgroup label="State Board">
+                                        <option>Class 1 (State Board)</option>
+                                        <option>Class 2 (State Board)</option>
+                                        <option>Class 3 (State Board)</option>
+                                        <option>Class 4 (State Board)</option>
+                                        <option>Class 5 (State Board)</option>
+                                        <option>Class 6 (State Board)</option>
+                                        <option>Class 7 (State Board)</option>
+                                        <option>Class 8 (State Board)</option>
+                                        <option>Class 9 (State Board)</option>
+                                        <option>Class 10 (State Board)</option>
+                                    </optgroup>
+                                    <optgroup label="Higher Secondary">
+                                        <option>11th Science</option>
+                                        <option>11th Commerce</option>
+                                        <option>11th Arts</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button type="button" id="previousStep2" class="secondary">Back</button>
+                            <button type="button" id="nextStep2" class="primary">Next</button>
+                        </div>
+                    </div>
+
+                    <div id="formStep3" class="form-step hidden">
+                        <h2>Contact Information</h2>
+
+                        <div class="form-grid">
+                            <div>
+                                <label>Student Email *</label>
+                                <input type="email" id="studentEmail" required>
+                            </div>
+                            <div>
+                                <label>Student Phone *</label>
+                                <input type="tel" id="studentPhone" required>
+                            </div>
+                            <div>
+                                <label>Parent / Guardian Name *</label>
+                                <input id="parentName" required>
+                            </div>
+                            <div>
+                                <label>Parent Phone *</label>
+                                <input type="tel" id="parentPhone" required>
+                            </div>
+                            <div class="full-width">
+                                <label>Address *</label>
+                                <textarea id="studentAddress" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button type="button" id="previousStep3" class="secondary">Back</button>
+                            <button type="submit" class="primary">Submit Application</button>
+                        </div>
+                    </div>
+                </form>
+                <p id="applicationMessage" class="message"></p>
+            </section>
+
+            <!-- APPLICATION LIST -->
+            <section id="applications" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Application Listing</h1>
+                        <p>Search and manage student applications</p>
+                    </div>
+                    <button id="newApplicationButton" class="primary">+ New Application</button>
+                </div>
+
+                <div class="panel">
+                    <div class="filter-grid">
+                        <input id="searchApplication" placeholder="Search ID, student name or email">
+                        <select id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option>Submitted</option>
+                            <option>Under Review</option>
+                            <option>Shortlisted</option>
+                            <option>Merit List</option>
+                            <option>Admitted</option>
+                            <option>Rejected</option>
+                        </select>
+                        <select id="courseFilter">
+                            <option value="">All Courses</option>
+                        </select>
+                        <input type="date" id="dateFilter">
+                    </div>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Student Name</th>
+                                    <th>Course</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- APPLICATION DETAIL -->
+            <section id="detail" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Application Details</h1>
+                        <p>Complete student application information</p>
+                    </div>
+                    <button class="secondary" data-back="applications">Back to Applications</button>
+                </div>
+                <div id="applicationDetailContent" class="panel">
+                    <p>Select an application to view its details.</p>
+                </div>
+            </section>
+
+            <!-- DOCUMENTS -->
+            <section id="documents" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Document Upload</h1>
+                        <p>Upload the required admission documents</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <label>Select Application</label>
+                    <select id="documentApplication"></select>
+
+                    <form id="documentForm">
+                        <div class="form-grid document-grid">
+                            <div>
+                                <label>Passport Size Photo</label>
+                                <input type="file" id="docPhoto" accept="image/*">
+                            </div>
+                            <div>
+                                <label>Signature</label>
+                                <input type="file" id="docSignature" accept="image/*">
+                            </div>
+                            <div>
+                                <label>Birth Certificate</label>
+                                <input type="file" id="docBirth">
+                            </div>
+                            <div>
+                                <label>Previous Marksheet</label>
+                                <input type="file" id="docMarksheet">
+                            </div>
+                            <div>
+                                <label>Transfer Certificate</label>
+                                <input type="file" id="docTransfer">
+                            </div>
+                            <div>
+                                <label>Identity Proof</label>
+                                <input type="file" id="docIdentity">
+                            </div>
+                            <div>
+                                <label>Parent's ID Proof</label>
+                                <input type="file" id="docParent">
+                            </div>
+                        </div>
+                        <button type="submit" class="primary">Upload Documents</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h2>Uploaded Documents</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Document</th>
+                                    <th>File Name</th>
+                                    <th>Upload Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REVIEW -->
+            <section id="review" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Application Review</h1>
+                        <p>Review applications and provide feedback</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Applications Awaiting Review</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Review Application</h2>
+                    <label>Select Application</label>
+                    <select id="reviewApplication"></select>
+
+                    <div id="reviewStudentDetails" class="detail-box">
+                        Select an application to view student details.
+                    </div>
+
+                    <label>Review Decision</label>
+                    <select id="reviewStatus">
+                        <option>Under Review</option>
+                        <option>Shortlisted</option>
+                        <option>Rejected</option>
+                    </select>
+
+                    <label>Comments / Feedback</label>
+                    <textarea id="reviewComments" placeholder="Enter review comments"></textarea>
+
+                    <button id="saveReviewButton" class="primary">Save Review Decision</button>
+                    <p id="reviewMessage" class="message"></p>
+                </div>
+            </section>
+
+            <!-- ENTRANCE EXAM -->
+            <section id="exam" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Entrance Exam Management</h1>
+                        <p>Schedule examinations and record scores</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Enter Exam Details</h2>
+                    <label>Application</label>
+                    <select id="examApplication"></select>
+
+                    <div class="form-grid">
+                        <div>
+                            <label>Exam Date</label>
+                            <input type="date" id="examDate">
+                        </div>
+                        <div>
+                            <label>Entrance Exam Score (out of 100)</label>
+                            <input type="number" id="examScore" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <button id="saveExamButton" class="primary">Save Exam Details</button>
+                    <p id="examMessage" class="message"></p>
+                </div>
+
+                <div class="panel">
+                    <h2>Exam Results</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Exam Date</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="examTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MERIT LIST -->
+            <section id="merit" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Merit List Generation</h1>
+                        <p>Generate merit rankings using academic and entrance scores</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <p>Calculation: Academic Score × 60% + Entrance Score × 40%</p>
+                    <button id="generateMeritButton" class="primary">Generate Merit List</button>
+                    <p id="meritMessage" class="message"></p>
+                </div>
+
+                <div class="panel">
+                    <h2>Merit List</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Academic Score</th>
+                                    <th>Entrance Score</th>
+                                    <th>Final Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="meritTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEES -->
+            <section id="fees" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Fee Management</h1>
+                        <p>Manage fee payments and generate receipts</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Sample Fee Structure</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Course Group</th>
+                                    <th>Fee Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Class 1–5</td><td>₹20,000</td></tr>
+                                <tr><td>Class 6–10</td><td>₹25,000</td></tr>
+                                <tr><td>11th Science</td><td>₹35,000</td></tr>
+                                <tr><td>11th Commerce</td><td>₹30,000</td></tr>
+                                <tr><td>11th Arts</td><td>₹28,000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Collect Fee Payment</h2>
+                    <label>Application</label>
+                    <select id="feeApplication"></select>
+
+                    <div class="form-grid">
+                        <div>
+                            <label>Fee Amount (₹)</label>
+                            <input type="number" id="feeAmount" min="1">
+                        </div>
+                        <div>
+                            <label>Payment Method</label>
+                            <select id="paymentMethod">
+                                <option>UPI</option>
+                                <option>Cash</option>
+                                <option>Card</option>
+                                <option>Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="payFeeButton" class="primary">Simulate Payment</button>
+                    <p id="feeMessage" class="message"></p>
+                </div>
+
+                <div class="panel">
+                    <h2>Payment Records</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Receipt ID</th>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Receipt</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADMISSION -->
+            <section id="admission" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Admission Confirmation</h1>
+                        <p>Confirm admission and generate admission letters</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <label>Select Application</label>
+                    <select id="admissionApplication"></select>
+                    <div id="admissionDetails" class="detail-box">
+                        Select an application to view its admission eligibility.
+                    </div>
+                    <button id="confirmAdmissionButton" class="primary">Confirm Admission</button>
+                    <p id="admissionMessage" class="message"></p>
+                </div>
+
+                <div class="panel">
+                    <h2>Admitted Students</h2>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Application ID</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Status</th>
+                                    <th>Letter</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admittedTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRACKING -->
+            <section id="tracking" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Application Tracking</h1>
+                        <p>Check the current status of an application</p>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <label>Application ID</label>
+                    <input id="trackingId" placeholder="Example: DAS-SCH-0001">
+                    <button id="trackButton" class="primary">Track Application</button>
+                    <div id="trackingResult" class="detail-box"></div>
+                </div>
+            </section>
+
+            <!-- REPORTS -->
+            <section id="reports" class="page hidden">
+                <div class="page-heading">
+                    <div>
+                        <h1>Reports</h1>
+                        <p>Admission, course-wise and demographic reports</p>
+                    </div>
+                    <div class="button-row">
+                        <button id="exportCSVButton" class="primary">Export CSV</button>
+                        <button id="printButton" class="secondary">Print / Save PDF</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span>Total Applications</span>
+                        <h2 id="reportTotal">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Admitted</span>
+                        <h2 id="reportAdmitted">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Rejected</span>
+                        <h2 id="reportRejected">0</h2>
+                    </div>
+                    <div class="stat-card">
+                        <span>Pending</span>
+                        <h2 id="reportPending">0</h2>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Course-wise Report</h2>
+                    <div id="courseReport"></div>
+                </div>
+
+                <div class="panel">
+                    <h2>Demographic Report</h2>
+                    <div id="genderReport"></div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
